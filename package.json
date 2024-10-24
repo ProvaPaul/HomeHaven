@@ -1,7 +1,22 @@
 {
   "dependencies": {
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.27.0"
-  }
+  },
+  "name": "homehaven",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon api/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node api/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
