@@ -5,6 +5,10 @@ dotenv.config();
 import userRouter from './routes/user.route.js';
 import authRouter from './routes/auth.route.js';
 
+import cors from 'cors';
+const app = express();
+
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 
 mongoose.connect(process.env.MONGO).then(() => {
     console.log('Connected to MongoDB');
@@ -17,7 +21,6 @@ const port = process.env.PORT || 4000;
 
 
 
-const app = express();
 app.use(express.json());
 
 app.use('/api/users', userRouter);
