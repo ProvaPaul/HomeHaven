@@ -15,33 +15,64 @@ export const signup = async(req, res,next) => {
         next(error);
     }
 }
-export const signin = async(req, res,next) => {
-    const {email, password} = req.body;
-    try{
-      const validUser=await User.findOne({
-        email
-      })
-      if(!validUser){
-        return next(errorHandler(404,'User not found!'));
-      }
-      const validPassword=bcryptjs.compareSync(password, validUser.password);
-      if(!validPassword){
-        return next(errorHandler(400,'Invalid password!'));
-      }
-      // after signing up successfully we have to save the token as cookies in the browser in hash format
-      const token=jwt.sign({id: validUser._id}, process.env.JWT_SECRET);
-      // for not returning password in response
-      const { password:pass,...rest }=validUser._doc;
+// export const signin = async(req, res,next) => {
+//     const {email, password} = req.body;
+//     try{
+//       const validUser=await User.findOne({
+//         email
+//       })
+//       if(!validUser){
+//         return next(errorHandler(404,'User not found!'));
+//       }
+//       const validPassword=bcryptjs.compareSync(password, validUser.password);
+//       if(!validPassword){
+//         return next(errorHandler(400,'Invalid password!'));
+//       }
+//       // after signing up successfully we have to save the token as cookies in the browser in hash format
+//       const token=jwt.sign({id: validUser._id}, process.env.JWT_SECRET);
+//       // for not returning password in response
+//       const { password:pass,...rest }=validUser._doc;
 
-      res.cookie ('access_token',token,{httpOnly:true})
-      .status(200)
-      .json(rest);
+//       res.cookie ('access_token',token,{httpOnly:true})
+//       .status(200)
+//       .json(rest);
 
-    }
-    catch(error){
+//     }
+//     catch(error){
+//       next(error);
+//     }
+// }
+export const signin = async (req, res, next) => {
+  const { email, password } = req.body;
+  try {
+      const validUser = await User.findOne({ email });
+      if (!validUser) {
+          return next(errorHandler(404, 'User not found!'));
+      }
+
+      const validPassword = bcryptjs.compareSync(password, validUser.password);
+      if (!validPassword) {
+          return next(errorHandler(400, 'Invalid password!'));
+      }
+
+      // Generate JWT token
+      const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+      // Exclude password from response
+      const { password: pass, ...userWithoutPassword } = validUser._doc;
+
+      // Set token in cookies and add it to the response JSON
+      res.cookie('access_token', token, { httpOnly: true })
+          .status(200)
+          .json({
+              ...userWithoutPassword,
+              token // Add token directly in the JSON response body
+          });
+  } catch (error) {
       next(error);
-    }
-}
+  }
+};
+
 export const google = async(req, res,next) => {
   try{
     const user = await User.findOne({ email:req.body.email });
