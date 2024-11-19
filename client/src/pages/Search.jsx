@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ListingItem from '../components/ListingItem';
 export default function Search() {
     const navigate = useNavigate();
     const [sidebardata, setSidebarData] = useState({
@@ -14,7 +15,7 @@ export default function Search() {
     
     const [loading, setLoading] = useState(false);
     const [listings, setListings] = useState([]);
-    console.log(listings);
+    const [showMore,setShowMore]=useState(false);
 
  useEffect(()=>{
     const urlParams=new URLSearchParams(window.location.search);
@@ -39,10 +40,17 @@ export default function Search() {
 
     const fetchListings =async()=>{
         setLoading(true);
+        setShowMore(false);
         try{
             const searchQuery=urlParams.toString();
             const res = await fetch(`http://localhost:4000/api/listing/get?${searchQuery}`);
             const data=await res.json();
+
+            if(data.length >8){
+                setShowMore(true);  
+            }else{
+                setShowMore(false);
+            }
             setListings(data);
             setLoading(false);
            
@@ -87,6 +95,19 @@ const handleChange = (e) => {
         urlParams.set('order', sidebardata.order);
         const searchQuery = urlParams.toString();
         navigate(`/search?${searchQuery}`);
+  }
+  const onShowMoreClick=async()=>{
+        const numberOfListings=listings.length;
+        const startIndex=numberOfListings;
+        const urlParams=new URLSearchParams(window.location.search);
+        urlParams.set('start',startIndex);
+        const searchQuery=urlParams.toString();
+        const res=await fetch(`http://localhost:4000/api/listing/get?${searchQuery}`);
+        const data=await res.json();
+        if(data.length<9){
+            setShowMore(false);
+        }
+        setListings([...listings,...data]);
   }
   return (
     <div className="flex flex-col md:flex-row">
@@ -158,8 +179,30 @@ const handleChange = (e) => {
 
             </form>
         </div>
-        <div className="">
+        <div className="flex-1">
             <h1 className="text-3xl font-semibold border-b p-3 text-slate-700 mt-4">Listing results:</h1>
+            <div className='p-7 flex flex-col gap-4'>
+                    {
+                        !loading && listings.length === 0 && ( <h1 className='text-xl
+                         text-slate-700'>No listings found</h1>
+                        )
+                    }
+                    {
+                        loading && (
+                            <p className='text-xl text-slate-700 text-center w-full'>Loading...</p>
+                        )
+                    }
+                    {
+                        !loading && listings && listings.map((listing) => <ListingItem key={listing._id} listing={listing} /> )
+                    }
+                    {
+                        showMore && (
+                            <button onClick={onShowMoreClick
+                            }
+                            className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 text-center w-full'>Show More</button>
+                        )
+                    }
+            </div>
         </div>
     </div>
   )
