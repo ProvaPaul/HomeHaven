@@ -102,11 +102,28 @@ Firebase keys are only needed for image uploads; the app runs without them.
 | GET | `/api/properties/inquiries/me` | Inquiries for my listings | ✅ |
 | GET | `/api/favorites` | My wishlist | ✅ |
 | POST | `/api/favorites/:propertyId` | Toggle favorite | ✅ |
+| PUT | `/api/auth/password` | Change password | ✅ |
+| GET | `/api/users/dashboard` | My dashboard stats (listings, views, inquiries, charts) | ✅ |
+| GET/POST | `/api/users/saved-searches` | List / save a search | ✅ |
+| DELETE | `/api/users/saved-searches/:id` | Delete saved search | ✅ |
+| GET | `/api/notifications` | My notifications (+unread count) | ✅ |
+| PUT | `/api/notifications/:id/read`, `/read-all` | Mark read | ✅ |
+| DELETE | `/api/notifications/:id` | Delete notification | ✅ |
+| GET | `/api/admin/stats` | Platform analytics | 👑 |
+| GET | `/api/admin/users` | Manage users (search, paginate) | 👑 |
+| PUT | `/api/admin/users/:id/role` | Change role | 👑 |
+| DELETE | `/api/admin/users/:id` | Delete user + their data | 👑 |
+| GET | `/api/admin/properties` | All listings (verification filter) | 👑 |
+| PUT | `/api/admin/properties/:id/verify` | Approve / reject listing | 👑 |
+| PUT | `/api/admin/properties/:id/feature` | Toggle featured | 👑 |
 
 ### Demo data
 
 ```bash
-npm run seed --prefix server   # 12 sample listings + demo@homehaven.com / Demo1234
+npm run seed --prefix server
+# 12 sample listings
+# demo@homehaven.com / Demo1234   (agent)
+# admin@homehaven.com / Admin1234 (admin — unlocks the admin dashboard)
 ```
 
 ## Features

@@ -5,10 +5,14 @@ import { RouterProvider } from 'react-router-dom';
 
 import { store } from './app/store';
 import { router } from './routes';
+import { fetchCurrentUser } from './features/auth/authThunks';
 import ThemeProvider from './providers/ThemeProvider';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import ToastProvider from './providers/ToastProvider';
 import './index.css';
+
+// Restore the session once at app start; route guards wait on this
+store.dispatch(fetchCurrentUser());
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

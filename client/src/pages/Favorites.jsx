@@ -15,12 +15,12 @@ export default function Favorites() {
   }, [dispatch]);
 
   return (
-    <div className="container-page py-10 lg:py-14">
-      <h1 className="flex items-center gap-2.5 text-3xl font-bold text-gray-900 dark:text-white">
-        <Heart className="h-7 w-7 fill-red-500 text-red-500" />
+    <div>
+      <h1 className="flex items-center gap-2.5 text-2xl font-bold text-gray-900 dark:text-white">
+        <Heart className="h-6 w-6 fill-red-500 text-red-500" />
         My Wishlist
       </h1>
-      <p className="mt-1.5 text-gray-600 dark:text-gray-400">
+      <p className="mt-1.5 text-sm text-gray-600 dark:text-gray-400">
         Properties you've saved for later.
       </p>
 

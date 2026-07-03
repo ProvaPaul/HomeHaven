@@ -59,6 +59,11 @@ const propertySchema = new mongoose.Schema(
       },
     },
     featured: { type: Boolean, default: false },
+    verification: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'pending',
+    },
     views: { type: Number, default: 0 },
     owner: {
       type: mongoose.Schema.Types.ObjectId,

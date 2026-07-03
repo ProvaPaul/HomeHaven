@@ -44,6 +44,13 @@ const userSchema = new mongoose.Schema(
         ref: 'Property',
       },
     ],
+    savedSearches: [
+      {
+        name: { type: String, required: true, trim: true, maxlength: 60 },
+        query: { type: String, required: true, maxlength: 500 },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );

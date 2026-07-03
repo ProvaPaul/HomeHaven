@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
-import { Bath, BedDouble, MapPin, Ruler, Star } from 'lucide-react';
+import { BadgeCheck, Bath, BedDouble, MapPin, Ruler, Star } from 'lucide-react';
 
 import StatusBadge from './StatusBadge';
 import FavoriteButton from './FavoriteButton';
@@ -23,6 +23,7 @@ function PropertyCard({ property }) {
     images,
     address,
     featured,
+    verification,
   } = property;
 
   return (
@@ -67,8 +68,14 @@ function PropertyCard({ property }) {
           </span>
         </div>
 
-        <h3 className="mt-1.5 line-clamp-1 font-semibold text-gray-900 transition group-hover:text-primary-600 dark:text-white dark:group-hover:text-primary-400">
-          {title}
+        <h3 className="mt-1.5 flex items-center gap-1.5 font-semibold text-gray-900 transition group-hover:text-primary-600 dark:text-white dark:group-hover:text-primary-400">
+          <span className="line-clamp-1">{title}</span>
+          {verification === 'approved' && (
+            <BadgeCheck
+              className="h-4 w-4 shrink-0 text-primary-600 dark:text-primary-400"
+              aria-label="Verified listing"
+            />
+          )}
         </h3>
 
         <p className="mb-4 mt-1 flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">

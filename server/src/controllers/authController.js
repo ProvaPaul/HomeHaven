@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import { notify } from '../models/Notification.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { generateToken, setTokenCookie, clearTokenCookie } from '../utils/generateToken.js';
@@ -19,6 +20,13 @@ export const register = asyncHandler(async (req, res) => {
   const user = await User.create({ name, email, password });
   const token = generateToken(user._id);
   setTokenCookie(res, token);
+
+  await notify(user._id, {
+    type: 'welcome',
+    title: 'Welcome to HomeHaven! 🏠',
+    message: 'Your account is ready. Browse properties, save favorites, and list your own home.',
+    link: '/properties',
+  });
 
   res.status(201).json({
     success: true,
@@ -61,6 +69,31 @@ export const logout = asyncHandler(async (req, res) => {
 // @route  GET /api/auth/me
 export const getMe = asyncHandler(async (req, res) => {
   res.json({ success: true, user: req.user });
+});
+
+// @route  PUT /api/auth/password
+export const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    throw new ApiError(400, 'Current and new password are required');
+  }
+  if (newPassword.length < 8) {
+    throw new ApiError(400, 'New password must be at least 8 characters');
+  }
+
+  const user = await User.findById(req.user._id).select('+password');
+  if (!(await user.comparePassword(currentPassword))) {
+    throw new ApiError(401, 'Current password is incorrect');
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  const token = generateToken(user._id);
+  setTokenCookie(res, token);
+
+  res.json({ success: true, message: 'Password updated successfully', token });
 });
 
 // @route  PUT /api/auth/profile

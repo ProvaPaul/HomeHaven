@@ -1,19 +1,10 @@
-import { useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
 import { Home } from 'lucide-react';
 
 import ThemeToggle from '../common/ThemeToggle';
-import { fetchCurrentUser } from '../../features/auth/authThunks';
 
 export default function AuthLayout() {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchCurrentUser());
-  }, [dispatch]);
-
   return (
     <div className="flex min-h-screen">
       {/* Brand panel */}

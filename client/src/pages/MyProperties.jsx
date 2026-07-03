@@ -48,7 +48,7 @@ export default function MyProperties() {
 
   if (loading) {
     return (
-      <div className="container-page animate-pulse py-10 lg:py-14">
+      <div className="animate-pulse">
         <div className="h-8 w-64 rounded bg-gray-200 dark:bg-gray-800" />
         <div className="mt-8 space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -60,11 +60,11 @@ export default function MyProperties() {
   }
 
   return (
-    <div className="container-page py-10 lg:py-14">
+    <div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Listings</h1>
-          <p className="mt-1.5 text-gray-600 dark:text-gray-400">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Listings</h1>
+          <p className="mt-1.5 text-sm text-gray-600 dark:text-gray-400">
             Manage your properties and review buyer inquiries.
           </p>
         </div>

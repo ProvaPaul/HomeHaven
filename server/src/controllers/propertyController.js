@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Property, { PROPERTY_TYPES, PROPERTY_STATUSES } from '../models/Property.js';
 import Inquiry from '../models/Inquiry.js';
+import { notify } from '../models/Notification.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 
@@ -62,6 +63,9 @@ const buildListFilter = (query) => {
       .filter((id) => mongoose.isValidObjectId(id));
     filter._id = { $in: ids };
   }
+
+  // Rejected listings never appear in public results
+  filter.verification = { $ne: 'rejected' };
 
   return filter;
 };
@@ -158,8 +162,11 @@ export const getSimilarProperties = asyncHandler(async (req, res) => {
 // @route POST /api/properties
 export const createProperty = asyncHandler(async (req, res) => {
   const data = { ...req.body, owner: req.user._id };
-  // Only admins can mark a property as featured
-  if (req.user.role !== 'admin') delete data.featured;
+  // Only admins can mark a property as featured or set verification
+  if (req.user.role !== 'admin') {
+    delete data.featured;
+    delete data.verification;
+  }
   delete data.views;
 
   const property = await Property.create(data);
@@ -182,7 +189,10 @@ export const updateProperty = asyncHandler(async (req, res) => {
   const updates = { ...req.body };
   delete updates.owner;
   delete updates.views;
-  if (req.user.role !== 'admin') delete updates.featured;
+  if (req.user.role !== 'admin') {
+    delete updates.featured;
+    delete updates.verification;
+  }
 
   Object.assign(property, updates);
   await property.save();
@@ -226,6 +236,13 @@ export const contactSeller = asyncHandler(async (req, res) => {
     email,
     phone,
     message,
+  });
+
+  await notify(property.owner, {
+    type: 'inquiry',
+    title: 'New inquiry received',
+    message: `${name} is interested in "${property.title}"`,
+    link: '/dashboard/listings',
   });
 
   res.status(201).json({

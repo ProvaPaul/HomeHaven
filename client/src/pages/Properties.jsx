@@ -1,14 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { Bookmark, Search, SlidersHorizontal, X } from 'lucide-react';
 
 import PropertyGrid from '../components/property/PropertyGrid';
 import FiltersPanel from '../components/property/FiltersPanel';
 import Pagination from '../components/common/Pagination';
 import Select from '../components/ui/Select';
+import api from '../lib/axios';
+import { STATUS_LABELS, TYPE_LABELS } from '../lib/format';
 import { fetchProperties } from '../features/properties/propertyThunks';
 import { selectPropertyList } from '../features/properties/propertiesSlice';
+import { selectIsAuthenticated } from '../features/auth/authSlice';
 
 const FILTER_KEYS = ['q', 'type', 'status', 'city', 'minPrice', 'maxPrice', 'beds', 'baths', 'sort', 'page'];
 
@@ -64,6 +68,36 @@ export default function Properties() {
     (k) => params[k]
   ).length;
 
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const navigate = useNavigate();
+  const hasCriteria = activeFilterCount > 0 || Boolean(params.q);
+
+  const handleSaveSearch = async () => {
+    if (!isAuthenticated) {
+      toast('Log in to save searches', { icon: '🔒' });
+      navigate('/login');
+      return;
+    }
+    // Build a readable default name from the active criteria
+    const parts = [];
+    if (params.type) parts.push(TYPE_LABELS[params.type] || params.type);
+    if (params.status) parts.push(STATUS_LABELS[params.status] || params.status);
+    if (params.city) parts.push(`in ${params.city}`);
+    if (params.q) parts.push(`"${params.q}"`);
+    const name = parts.length ? parts.join(' ') : 'All properties';
+
+    const query = new URLSearchParams(
+      Object.fromEntries(Object.entries(params).filter(([k]) => k !== 'page'))
+    ).toString();
+
+    try {
+      await api.post('/users/saved-searches', { name, query });
+      toast.success(`Search saved as "${name}"`);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <div className="container-page py-10 lg:py-14">
       {/* Header */}
@@ -74,6 +108,16 @@ export default function Properties() {
             {status === 'succeeded' ? `${total} propert${total === 1 ? 'y' : 'ies'} available` : 'Loading properties…'}
           </p>
         </div>
+        {hasCriteria && (
+          <button
+            type="button"
+            onClick={handleSaveSearch}
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:border-primary-400 hover:text-primary-600 dark:border-gray-700 dark:text-gray-200"
+          >
+            <Bookmark className="h-4 w-4" />
+            Save this search
+          </button>
+        )}
       </div>
 
       {/* Search + sort bar */}

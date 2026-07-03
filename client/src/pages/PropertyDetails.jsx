@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import {
+  BadgeCheck,
   Bath,
   BedDouble,
   Building2,
@@ -128,6 +129,12 @@ export default function PropertyDetails() {
                 <StatusBadge status={property.status} />
                 {property.featured && (
                   <span className="rounded-md bg-amber-500 px-2.5 py-1 text-xs font-semibold text-white">Featured</span>
+                )}
+                {property.verification === 'approved' && (
+                  <span className="inline-flex items-center gap-1 rounded-md bg-primary-600 px-2.5 py-1 text-xs font-semibold text-white">
+                    <BadgeCheck className="h-3.5 w-3.5" />
+                    Verified
+                  </span>
                 )}
               </div>
               <h1 className="mt-3 text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">

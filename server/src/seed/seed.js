@@ -208,9 +208,28 @@ const seed = async () => {
     console.log('Created demo user demo@homehaven.com / Demo1234');
   }
 
+  let admin = await User.findOne({ email: 'admin@homehaven.com' });
+  if (!admin) {
+    admin = await User.create({
+      name: 'HomeHaven Admin',
+      email: 'admin@homehaven.com',
+      password: 'Admin1234',
+      role: 'admin',
+    });
+    console.log('Created admin user admin@homehaven.com / Admin1234');
+  } else if (admin.role !== 'admin') {
+    admin.role = 'admin';
+    await admin.save();
+  }
+
   await Property.deleteMany({ owner: demo._id });
   const docs = await Property.insertMany(
-    sampleProperties.map((p) => ({ ...p, owner: demo._id, views: Math.floor(Math.random() * 400) }))
+    sampleProperties.map((p, i) => ({
+      ...p,
+      owner: demo._id,
+      views: Math.floor(Math.random() * 400),
+      verification: i % 4 === 3 ? 'pending' : 'approved',
+    }))
   );
   console.log(`Seeded ${docs.length} properties.`);
 

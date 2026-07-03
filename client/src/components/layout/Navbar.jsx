@@ -2,14 +2,27 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, Heart, Home, LayoutList, LogOut, Menu, Scale, User, X } from 'lucide-react';
+import {
+  ChevronDown,
+  Heart,
+  Home,
+  LayoutDashboard,
+  LayoutList,
+  LogOut,
+  Menu,
+  Scale,
+  User,
+  X,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import ThemeToggle from '../common/ThemeToggle';
+import NotificationsBell from '../dashboard/NotificationsBell';
 import { selectUser } from '../../features/auth/authSlice';
 import { logoutUser } from '../../features/auth/authThunks';
 import { selectFavoriteIds } from '../../features/favorites/favoritesSlice';
 import { selectCompareIds } from '../../features/compare/compareSlice';
+import { fetchNotifications } from '../../features/notifications/notificationsSlice';
 import { cn } from '../../lib/utils';
 
 const navLinks = [
@@ -89,15 +102,15 @@ function UserMenu({ user }) {
               <p className="truncate text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
             </div>
             <Link
-              to="/profile"
+              to="/dashboard"
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 transition hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-800"
             >
-              <User className="h-4 w-4" />
-              My Profile
+              <LayoutDashboard className="h-4 w-4" />
+              Dashboard
             </Link>
             <Link
-              to="/my-properties"
+              to="/dashboard/listings"
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 transition hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-800"
             >
@@ -105,12 +118,20 @@ function UserMenu({ user }) {
               My Listings
             </Link>
             <Link
-              to="/favorites"
+              to="/dashboard/favorites"
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 transition hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-800"
             >
               <Heart className="h-4 w-4" />
               My Wishlist
+            </Link>
+            <Link
+              to="/dashboard/settings"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 transition hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-800"
+            >
+              <User className="h-4 w-4" />
+              Settings
             </Link>
             <button
               type="button"
@@ -135,6 +156,10 @@ export default function Navbar() {
   const compareCount = useSelector(selectCompareIds).length;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) dispatch(fetchNotifications());
+  }, [dispatch, user]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -198,8 +223,9 @@ export default function Navbar() {
         <div className="flex items-center gap-1.5">
           <div className="hidden items-center gap-1 sm:flex">
             <IconLink to="/compare" icon={Scale} label="Compare properties" count={compareCount} />
-            {user && <IconLink to="/favorites" icon={Heart} label="My wishlist" count={favoriteCount} />}
+            {user && <IconLink to="/dashboard/favorites" icon={Heart} label="My wishlist" count={favoriteCount} />}
           </div>
+          {user && <NotificationsBell />}
           <ThemeToggle />
 
           <div className="hidden items-center gap-2 md:flex">
@@ -277,7 +303,15 @@ export default function Navbar() {
                 {user ? (
                   <>
                     <NavLink
-                      to="/favorites"
+                      to="/dashboard"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-2.5 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                    >
+                      <LayoutDashboard className="h-4 w-4" />
+                      Dashboard
+                    </NavLink>
+                    <NavLink
+                      to="/dashboard/favorites"
                       onClick={() => setMobileOpen(false)}
                       className="flex items-center gap-2.5 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                     >
@@ -285,20 +319,12 @@ export default function Navbar() {
                       My Wishlist {favoriteCount > 0 && `(${favoriteCount})`}
                     </NavLink>
                     <NavLink
-                      to="/my-properties"
+                      to="/dashboard/listings"
                       onClick={() => setMobileOpen(false)}
                       className="flex items-center gap-2.5 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                     >
                       <LayoutList className="h-4 w-4" />
                       My Listings
-                    </NavLink>
-                    <NavLink
-                      to="/profile"
-                      onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-2.5 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
-                    >
-                      <User className="h-4 w-4" />
-                      My Profile
                     </NavLink>
                     <button
                       type="button"

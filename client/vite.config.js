@@ -17,6 +17,7 @@ export default defineConfig({
           redux: ['@reduxjs/toolkit', 'react-redux'],
           motion: ['framer-motion'],
           forms: ['react-hook-form', '@hookform/resolvers', 'zod'],
+          charts: ['recharts'],
         },
       },
     },
