@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 import Navbar from './Navbar';
 import Footer from './Footer';
+import AiChatWidget from '../ai/AiChatWidget';
 
 export default function RootLayout() {
   const { pathname } = useLocation();
@@ -18,6 +19,7 @@ export default function RootLayout() {
         <Outlet />
       </main>
       <Footer />
+      <AiChatWidget />
     </div>
   );
 }

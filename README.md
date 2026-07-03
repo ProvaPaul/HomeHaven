@@ -116,6 +116,26 @@ Firebase keys are only needed for image uploads; the app runs without them.
 | GET | `/api/admin/properties` | All listings (verification filter) | 👑 |
 | PUT | `/api/admin/properties/:id/verify` | Approve / reject listing | 👑 |
 | PUT | `/api/admin/properties/:id/feature` | Toggle featured | 👑 |
+| GET | `/api/ai/status` | AI availability + provider | — |
+| POST | `/api/ai/search` | Natural-language search → filters + results | — |
+| POST | `/api/ai/chat` | AI assistant chat (listing context aware) | — |
+| POST | `/api/ai/describe` | Generate a listing description | ✅ |
+| GET | `/api/ai/summary/:propertyId` | Summarize a listing | — |
+| POST | `/api/ai/recommendations` | Personalized recommendations | optional |
+| POST | `/api/ai/estimate-price` | Market-value estimate from comparables | — |
+| GET | `/api/ai/nearby/:propertyId` | Nearby schools/hospitals/restaurants/bus stops (OpenStreetMap) | — |
+| GET | `/api/ai/seller-insights` | AI seller analytics & listing tips | ✅ |
+
+### AI setup (optional)
+
+All AI features ship with smart heuristic fallbacks and work with **no key at all**. To enable
+full LLM-powered responses, add ONE of these to `server/.env`:
+
+```bash
+GEMINI_API_KEY=...   # free tier: https://aistudio.google.com/apikey
+# or
+OPENAI_API_KEY=...
+```
 
 ### Demo data
 

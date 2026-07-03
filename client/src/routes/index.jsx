@@ -22,6 +22,7 @@ import Compare from '../pages/Compare';
 import NotFound from '../pages/NotFound';
 
 import Overview from '../pages/dashboard/Overview';
+import Insights from '../pages/dashboard/Insights';
 import SavedSearches from '../pages/dashboard/SavedSearches';
 import RecentlyViewedPage from '../pages/dashboard/RecentlyViewedPage';
 import Notifications from '../pages/dashboard/Notifications';
@@ -63,6 +64,7 @@ export const router = createBrowserRouter([
         element: <DashboardLayout />,
         children: [
           { index: true, element: <Overview /> },
+          { path: 'insights', element: <Insights /> },
           { path: 'listings', element: <MyProperties /> },
           { path: 'favorites', element: <Favorites /> },
           { path: 'saved-searches', element: <SavedSearches /> },

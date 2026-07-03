@@ -15,7 +15,7 @@ const SORT_OPTIONS = {
 
 const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-const buildListFilter = (query) => {
+export const buildListFilter = (query) => {
   const filter = {};
 
   if (query.q) {

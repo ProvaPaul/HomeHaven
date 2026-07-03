@@ -14,6 +14,7 @@ import {
   Menu,
   Settings,
   Shield,
+  Sparkles,
   Users,
   Bell,
   BadgeCheck,
@@ -29,6 +30,7 @@ import { cn } from '../../lib/utils';
 
 const userLinks = [
   { to: '/dashboard', label: 'Overview', icon: LayoutDashboard, end: true },
+  { to: '/dashboard/insights', label: 'AI Insights', icon: Sparkles },
   { to: '/dashboard/listings', label: 'My Listings', icon: LayoutList },
   { to: '/dashboard/favorites', label: 'Favorites', icon: Heart },
   { to: '/dashboard/saved-searches', label: 'Saved Searches', icon: Bookmark },

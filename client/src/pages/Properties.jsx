@@ -6,6 +6,7 @@ import { Bookmark, Search, SlidersHorizontal, X } from 'lucide-react';
 
 import PropertyGrid from '../components/property/PropertyGrid';
 import FiltersPanel from '../components/property/FiltersPanel';
+import SmartSearchBar from '../components/ai/SmartSearchBar';
 import Pagination from '../components/common/Pagination';
 import Select from '../components/ui/Select';
 import api from '../lib/axios';
@@ -120,8 +121,26 @@ export default function Properties() {
         )}
       </div>
 
+      {/* AI natural-language search */}
+      <div className="mt-6">
+        <SmartSearchBar
+          onFilters={(filters) =>
+            updateParams({
+              q: filters.q || '',
+              type: filters.type || '',
+              status: filters.status || '',
+              city: filters.city || '',
+              minPrice: filters.minPrice ? String(filters.minPrice) : '',
+              maxPrice: filters.maxPrice ? String(filters.maxPrice) : '',
+              beds: filters.beds ? String(filters.beds) : '',
+              baths: filters.baths ? String(filters.baths) : '',
+            })
+          }
+        />
+      </div>
+
       {/* Search + sort bar */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row">
         <form onSubmit={handleSearch} className="relative flex-1">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-400" />
           <input

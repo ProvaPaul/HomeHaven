@@ -24,6 +24,8 @@ import ShareButton from '../components/property/ShareButton';
 import ContactSellerForm from '../components/property/ContactSellerForm';
 import PropertyGrid from '../components/property/PropertyGrid';
 import RecentlyViewed from '../components/property/RecentlyViewed';
+import AiSummary from '../components/ai/AiSummary';
+import NearbyPlaces from '../components/ai/NearbyPlaces';
 import NotFound from './NotFound';
 import api from '../lib/axios';
 import { recordView } from '../lib/recentlyViewed';
@@ -170,6 +172,9 @@ export default function PropertyDetails() {
             ))}
           </div>
 
+          {/* AI summary */}
+          <AiSummary propertyId={property._id} />
+
           {/* Description */}
           <section className="mt-8">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">About this property</h2>
@@ -194,6 +199,9 @@ export default function PropertyDetails() {
               </ul>
             </section>
           )}
+
+          {/* Nearby schools, hospitals, restaurants, transport */}
+          <NearbyPlaces propertyId={property._id} />
         </div>
 
         {/* Right column */}

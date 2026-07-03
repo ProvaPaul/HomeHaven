@@ -19,6 +19,7 @@ import {
 
 import PropertySection from '../components/property/PropertySection';
 import RecentlyViewed from '../components/property/RecentlyViewed';
+import Recommendations from '../components/ai/Recommendations';
 import {
   fetchFeaturedProperties,
   fetchLatestProperties,
@@ -228,9 +229,12 @@ export default function Home() {
         linkLabel="Browse all"
       />
 
+      {/* AI recommendations */}
+      <Recommendations className="bg-gray-50 dark:bg-gray-900" />
+
       {/* Recently viewed */}
       <div className="container-page">
-        <RecentlyViewed className="pb-4" />
+        <RecentlyViewed className="py-4" />
       </div>
 
       {/* Features */}

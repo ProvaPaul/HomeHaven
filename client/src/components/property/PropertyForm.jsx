@@ -2,14 +2,17 @@ import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
-import { ImagePlus, Link as LinkIcon, Loader2, Plus, Trash2, X } from 'lucide-react';
+import { ImagePlus, Link as LinkIcon, Loader2, Plus, Sparkles, Trash2, X } from 'lucide-react';
 
 import Input from '../ui/Input';
 import Select from '../ui/Select';
 import Button from '../ui/Button';
+import PriceEstimator from '../ai/PriceEstimator';
+import api from '../../lib/axios';
 import { propertySchema } from '../../lib/validations';
 import { uploadPropertyImages } from '../../lib/uploadImages';
 import { isFirebaseConfigured } from '../../lib/firebase';
+import { checkImageQuality } from '../../lib/imageQuality';
 import { STATUS_LABELS, TYPE_LABELS } from '../../lib/format';
 import { cn } from '../../lib/utils';
 
@@ -45,16 +48,57 @@ export default function PropertyForm({ property, onSubmit, submitLabel = 'Publis
   const [amenityDraft, setAmenityDraft] = useState('');
   const [urlDraft, setUrlDraft] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const fileRef = useRef(null);
 
   const {
     register,
     handleSubmit,
+    getValues,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(propertySchema),
     defaultValues: toFormValues(property),
   });
+
+  const generateDescription = async () => {
+    const v = getValues();
+    if (!v.type || !v.city || !v.area) {
+      toast.error('Fill in type, city, and area first — the AI uses them as facts');
+      return;
+    }
+    setGenerating(true);
+    try {
+      const { data } = await api.post('/ai/describe', {
+        title: v.title,
+        type: v.type,
+        status: v.status,
+        price: Number(v.price) || undefined,
+        bedrooms: Number(v.bedrooms) || 0,
+        bathrooms: Number(v.bathrooms) || 0,
+        area: Number(v.area),
+        city: v.city,
+        state: v.state,
+        yearBuilt: Number(v.yearBuilt) || undefined,
+        amenities,
+      });
+      setValue('description', data.description, { shouldValidate: true, shouldDirty: true });
+      toast.success(data.aiGenerated ? 'Description generated with AI' : 'Description drafted — add an AI key for richer copy');
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const warnAboutQuality = async (source, label) => {
+    const result = await checkImageQuality(source);
+    if (result.warnings.length) {
+      toast(`${label}: ${result.warnings.join('; ')}`, { icon: '📷', duration: 5000 });
+    }
+    return result;
+  };
 
   const addAmenity = (value) => {
     const clean = value.trim();
@@ -64,7 +108,7 @@ export default function PropertyForm({ property, onSubmit, submitLabel = 'Publis
     setAmenityDraft('');
   };
 
-  const addImageUrl = () => {
+  const addImageUrl = async () => {
     const url = urlDraft.trim();
     if (!url) return;
     if (!/^https?:\/\/.+/i.test(url)) {
@@ -77,6 +121,8 @@ export default function PropertyForm({ property, onSubmit, submitLabel = 'Publis
     }
     setImages((list) => [...list, url]);
     setUrlDraft('');
+    // Advisory AI quality check (skipped automatically if CORS blocks pixel access)
+    warnAboutQuality(url, 'Added image');
   };
 
   const handleFiles = async (e) => {
@@ -85,6 +131,10 @@ export default function PropertyForm({ property, onSubmit, submitLabel = 'Publis
     if (images.length + files.length > MAX_IMAGES) {
       toast.error(`Maximum ${MAX_IMAGES} images`);
       return;
+    }
+    // AI quality check before upload — warn, but never block
+    for (const file of files) {
+      await warnAboutQuality(file, file.name);
     }
     setUploading(true);
     try {
@@ -137,9 +187,20 @@ export default function PropertyForm({ property, onSubmit, submitLabel = 'Publis
         <div className="mt-5 space-y-5">
           <Input label="Title" name="title" placeholder="e.g. Modern Family House with Garden" error={errors.title?.message} {...register('title')} />
           <div>
-            <label htmlFor="description" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Description
-            </label>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Description
+              </label>
+              <button
+                type="button"
+                onClick={generateDescription}
+                disabled={generating}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-primary-300 px-2.5 py-1 text-xs font-semibold text-primary-700 transition hover:bg-primary-50 disabled:opacity-60 dark:border-primary-500/40 dark:text-primary-300 dark:hover:bg-primary-500/10"
+              >
+                {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                Generate with AI
+              </button>
+            </div>
             <textarea
               id="description"
               rows={5}
@@ -167,6 +228,24 @@ export default function PropertyForm({ property, onSubmit, submitLabel = 'Publis
           <Input label="Year Built (optional)" name="yearBuilt" type="number" placeholder="2015" error={errors.yearBuilt?.message} {...register('yearBuilt')} />
           <Input label="Bedrooms" name="bedrooms" type="number" min="0" error={errors.bedrooms?.message} {...register('bedrooms')} />
           <Input label="Bathrooms" name="bathrooms" type="number" min="0" error={errors.bathrooms?.message} {...register('bathrooms')} />
+        </div>
+        <div className="mt-5">
+          <PriceEstimator
+            getDraft={() => {
+              const v = getValues();
+              return {
+                type: v.type,
+                city: v.city,
+                area: Number(v.area) || 0,
+                bedrooms: Number(v.bedrooms) || 0,
+                bathrooms: Number(v.bathrooms) || 0,
+                status: v.status,
+                yearBuilt: Number(v.yearBuilt) || undefined,
+                amenities,
+              };
+            }}
+            onUsePrice={(price) => setValue('price', price, { shouldValidate: true, shouldDirty: true })}
+          />
         </div>
       </div>
 

@@ -32,6 +32,24 @@ export const protect = asyncHandler(async (req, res, next) => {
   next();
 });
 
+// Attaches req.user when a valid token is present, but never rejects
+export const optionalAuth = asyncHandler(async (req, res, next) => {
+  let token = req.cookies?.token;
+  const authHeader = req.headers.authorization;
+  if (!token && authHeader?.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  }
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, env.JWT_SECRET);
+      req.user = await User.findById(decoded.id);
+    } catch {
+      // Invalid or expired token — continue as guest
+    }
+  }
+  next();
+});
+
 export const restrictTo = (...roles) => (req, res, next) => {
   if (!roles.includes(req.user?.role)) {
     return next(new ApiError(403, 'You do not have permission to perform this action'));
