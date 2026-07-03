@@ -1,16 +1,29 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
   Building2,
+  Castle,
   Home as HomeIcon,
   KeyRound,
-  MapPin,
+  LandPlot,
   Search,
   ShieldCheck,
   Sparkles,
+  Store,
   Users,
+  Warehouse,
 } from 'lucide-react';
+
+import PropertySection from '../components/property/PropertySection';
+import RecentlyViewed from '../components/property/RecentlyViewed';
+import {
+  fetchFeaturedProperties,
+  fetchLatestProperties,
+} from '../features/properties/propertyThunks';
+import { selectFeatured, selectLatest } from '../features/properties/propertiesSlice';
 
 const stats = [
   { value: '12k+', label: 'Properties Listed' },
@@ -43,9 +56,12 @@ const features = [
 ];
 
 const categories = [
-  { icon: HomeIcon, title: 'Houses', count: '4,200+ listings' },
-  { icon: Building2, title: 'Apartments', count: '6,800+ listings' },
-  { icon: MapPin, title: 'Land & Plots', count: '1,100+ listings' },
+  { icon: HomeIcon, title: 'Houses', type: 'house' },
+  { icon: Building2, title: 'Apartments', type: 'apartment' },
+  { icon: Castle, title: 'Villas', type: 'villa' },
+  { icon: Warehouse, title: 'Condos', type: 'condo' },
+  { icon: LandPlot, title: 'Land', type: 'land' },
+  { icon: Store, title: 'Commercial', type: 'commercial' },
 ];
 
 const fadeUp = {
@@ -58,6 +74,22 @@ const fadeUp = {
 };
 
 export default function Home() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const featured = useSelector(selectFeatured);
+  const latest = useSelector(selectLatest);
+
+  useEffect(() => {
+    dispatch(fetchFeaturedProperties());
+    dispatch(fetchLatestProperties());
+  }, [dispatch]);
+
+  const handleHeroSearch = (e) => {
+    e.preventDefault();
+    const q = new FormData(e.currentTarget).get('q')?.toString().trim();
+    navigate(q ? `/properties?q=${encodeURIComponent(q)}` : '/properties');
+  };
+
   return (
     <>
       {/* Hero */}
@@ -97,27 +129,32 @@ export default function Home() {
             rent, or sell — all in one beautifully simple platform.
           </motion.p>
 
-          <motion.div
+          <motion.form
             variants={fadeUp}
             initial="hidden"
             animate="visible"
             custom={3}
-            className="mt-8 flex flex-col gap-3 sm:flex-row"
+            onSubmit={handleHeroSearch}
+            className="mt-8 flex w-full max-w-xl gap-2 rounded-2xl border border-gray-200 bg-white p-2 shadow-lg shadow-gray-200/50 dark:border-gray-800 dark:bg-gray-900 dark:shadow-none"
           >
-            <Link
-              to="/register"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 px-6 py-3 text-base font-semibold text-white shadow-md shadow-primary-600/25 transition hover:bg-primary-700"
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+              <input
+                type="search"
+                name="q"
+                placeholder="Search by city, neighborhood, or keyword…"
+                aria-label="Search properties"
+                className="h-full w-full rounded-xl bg-transparent pl-11 pr-3 text-sm text-gray-900 outline-none placeholder:text-gray-400 dark:text-white"
+              />
+            </div>
+            <button
+              type="submit"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary-700"
             >
-              Get Started Free
+              Search
               <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              to="/about"
-              className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-6 py-3 text-base font-semibold text-gray-700 transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
-            >
-              Learn More
-            </Link>
-          </motion.div>
+            </button>
+          </motion.form>
 
           {/* Stats */}
           <motion.div
@@ -137,34 +174,64 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Featured properties */}
+      <PropertySection
+        title="Featured Properties"
+        subtitle="Hand-picked homes our team loves right now."
+        properties={featured.items}
+        isLoading={featured.status === 'loading' || featured.status === 'idle'}
+        linkTo="/properties?sort=popular"
+        linkLabel="View all properties"
+      />
+
       {/* Categories */}
-      <section className="container-page py-16 lg:py-24">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Browse by Category</h2>
-          <p className="mx-auto mt-3 max-w-xl text-gray-600 dark:text-gray-400">
-            Whatever you're looking for, we have a home for it.
-          </p>
-        </div>
-        <div className="mt-10 grid gap-6 sm:grid-cols-3">
-          {categories.map((cat, i) => (
-            <motion.div
-              key={cat.title}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-60px' }}
-              custom={i}
-              className="group cursor-pointer rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm transition hover:-translate-y-1 hover:border-primary-300 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-primary-500/40"
-            >
-              <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-primary-50 text-primary-600 transition group-hover:bg-primary-600 group-hover:text-white dark:bg-primary-500/10 dark:text-primary-400">
-                <cat.icon className="h-7 w-7" />
-              </span>
-              <h3 className="mt-5 text-lg font-semibold text-gray-900 dark:text-white">{cat.title}</h3>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{cat.count}</p>
-            </motion.div>
-          ))}
+      <section className="bg-gray-50 dark:bg-gray-900">
+        <div className="container-page py-16 lg:py-20">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Browse by Category</h2>
+            <p className="mx-auto mt-3 max-w-xl text-gray-600 dark:text-gray-400">
+              Whatever you're looking for, we have a home for it.
+            </p>
+          </div>
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {categories.map((cat, i) => (
+              <motion.div
+                key={cat.title}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-60px' }}
+                custom={i}
+              >
+                <Link
+                  to={`/properties?type=${cat.type}`}
+                  className="group flex flex-col items-center rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-sm transition hover:-translate-y-1 hover:border-primary-300 hover:shadow-lg dark:border-gray-800 dark:bg-gray-950 dark:hover:border-primary-500/40"
+                >
+                  <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 text-primary-600 transition group-hover:bg-primary-600 group-hover:text-white dark:bg-primary-500/10 dark:text-primary-400">
+                    <cat.icon className="h-6 w-6" />
+                  </span>
+                  <h3 className="mt-4 text-sm font-semibold text-gray-900 dark:text-white">{cat.title}</h3>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
+
+      {/* Latest properties */}
+      <PropertySection
+        title="Latest Listings"
+        subtitle="Fresh on the market — be the first to take a look."
+        properties={latest.items}
+        isLoading={latest.status === 'loading' || latest.status === 'idle'}
+        linkTo="/properties"
+        linkLabel="Browse all"
+      />
+
+      {/* Recently viewed */}
+      <div className="container-page">
+        <RecentlyViewed className="pb-4" />
+      </div>
 
       {/* Features */}
       <section className="bg-gray-50 dark:bg-gray-900">

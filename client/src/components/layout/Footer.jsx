@@ -8,9 +8,10 @@ const footerLinks = {
     { label: 'Careers', to: '/about' },
   ],
   Explore: [
-    { label: 'Buy a Home', to: '/' },
-    { label: 'Rent a Home', to: '/' },
-    { label: 'Sell a Home', to: '/' },
+    { label: 'Buy a Home', to: '/properties?status=for-sale' },
+    { label: 'Rent a Home', to: '/properties?status=for-rent' },
+    { label: 'Sell a Home', to: '/properties/new' },
+    { label: 'Compare', to: '/compare' },
   ],
   Support: [
     { label: 'Help Center', to: '/contact' },

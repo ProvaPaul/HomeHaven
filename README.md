@@ -89,6 +89,25 @@ Firebase keys are only needed for image uploads; the app runs without them.
 | POST | `/api/auth/logout` | Log out (clears cookie) | — |
 | GET | `/api/auth/me` | Current user | ✅ |
 | PUT | `/api/auth/profile` | Update profile | ✅ |
+| GET | `/api/properties` | List with `q, type, status, city, minPrice, maxPrice, beds, baths, ids, sort, page, limit` | — |
+| GET | `/api/properties/featured` | Featured listings | — |
+| GET | `/api/properties/meta` | Filter metadata (types, statuses, cities, amenities) | — |
+| GET | `/api/properties/:id` | Property details (+1 view) | — |
+| GET | `/api/properties/:id/similar` | Similar listings | — |
+| POST | `/api/properties` | Create listing | ✅ |
+| PUT | `/api/properties/:id` | Update listing (owner/admin) | ✅ |
+| DELETE | `/api/properties/:id` | Delete listing (owner/admin) | ✅ |
+| GET | `/api/properties/user/me` | My listings | ✅ |
+| POST | `/api/properties/:id/contact` | Contact seller (creates inquiry) | — |
+| GET | `/api/properties/inquiries/me` | Inquiries for my listings | ✅ |
+| GET | `/api/favorites` | My wishlist | ✅ |
+| POST | `/api/favorites/:propertyId` | Toggle favorite | ✅ |
+
+### Demo data
+
+```bash
+npm run seed --prefix server   # 12 sample listings + demo@homehaven.com / Demo1234
+```
 
 ## Features
 

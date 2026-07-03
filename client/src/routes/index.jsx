@@ -11,6 +11,13 @@ import Contact from '../pages/Contact';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Profile from '../pages/Profile';
+import Properties from '../pages/Properties';
+import PropertyDetails from '../pages/PropertyDetails';
+import AddProperty from '../pages/AddProperty';
+import EditProperty from '../pages/EditProperty';
+import MyProperties from '../pages/MyProperties';
+import Favorites from '../pages/Favorites';
+import Compare from '../pages/Compare';
 import NotFound from '../pages/NotFound';
 
 export const router = createBrowserRouter([
@@ -20,10 +27,19 @@ export const router = createBrowserRouter([
       { path: '/', element: <Home /> },
       { path: '/about', element: <About /> },
       { path: '/contact', element: <Contact /> },
+      { path: '/properties', element: <Properties /> },
+      { path: '/compare', element: <Compare /> },
       {
         element: <ProtectedRoute />,
-        children: [{ path: '/profile', element: <Profile /> }],
+        children: [
+          { path: '/profile', element: <Profile /> },
+          { path: '/properties/new', element: <AddProperty /> },
+          { path: '/properties/:id/edit', element: <EditProperty /> },
+          { path: '/my-properties', element: <MyProperties /> },
+          { path: '/favorites', element: <Favorites /> },
+        ],
       },
+      { path: '/properties/:id', element: <PropertyDetails /> },
       { path: '*', element: <NotFound /> },
     ],
   },

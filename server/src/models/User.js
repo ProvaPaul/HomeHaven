@@ -33,6 +33,17 @@ const userSchema = new mongoose.Schema(
       enum: ['user', 'agent', 'admin'],
       default: 'user',
     },
+    phone: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    favorites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Property',
+      },
+    ],
   },
   { timestamps: true }
 );

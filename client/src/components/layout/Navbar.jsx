@@ -2,19 +2,39 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, Home, LogOut, Menu, User, X } from 'lucide-react';
+import { ChevronDown, Heart, Home, LayoutList, LogOut, Menu, Scale, User, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import ThemeToggle from '../common/ThemeToggle';
 import { selectUser } from '../../features/auth/authSlice';
 import { logoutUser } from '../../features/auth/authThunks';
+import { selectFavoriteIds } from '../../features/favorites/favoritesSlice';
+import { selectCompareIds } from '../../features/compare/compareSlice';
 import { cn } from '../../lib/utils';
 
 const navLinks = [
   { to: '/', label: 'Home' },
+  { to: '/properties', label: 'Properties' },
   { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
 ];
+
+function IconLink({ to, icon: Icon, label, count }) {
+  return (
+    <Link
+      to={to}
+      aria-label={label}
+      className="relative flex h-9 w-9 items-center justify-center rounded-lg text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+    >
+      <Icon className="h-5 w-5" />
+      {count > 0 && (
+        <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary-600 px-1 text-[10px] font-bold text-white">
+          {count}
+        </span>
+      )}
+    </Link>
+  );
+}
 
 function UserMenu({ user }) {
   const [open, setOpen] = useState(false);
@@ -76,6 +96,22 @@ function UserMenu({ user }) {
               <User className="h-4 w-4" />
               My Profile
             </Link>
+            <Link
+              to="/my-properties"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 transition hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-800"
+            >
+              <LayoutList className="h-4 w-4" />
+              My Listings
+            </Link>
+            <Link
+              to="/favorites"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 transition hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-800"
+            >
+              <Heart className="h-4 w-4" />
+              My Wishlist
+            </Link>
             <button
               type="button"
               onClick={handleLogout}
@@ -95,6 +131,8 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const user = useSelector(selectUser);
+  const favoriteCount = useSelector(selectFavoriteIds).length;
+  const compareCount = useSelector(selectCompareIds).length;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -157,7 +195,11 @@ export default function Navbar() {
           ))}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          <div className="hidden items-center gap-1 sm:flex">
+            <IconLink to="/compare" icon={Scale} label="Compare properties" count={compareCount} />
+            {user && <IconLink to="/favorites" icon={Heart} label="My wishlist" count={favoriteCount} />}
+          </div>
           <ThemeToggle />
 
           <div className="hidden items-center gap-2 md:flex">
@@ -224,8 +266,32 @@ export default function Navbar() {
               ))}
 
               <div className="!mt-3 border-t border-gray-100 pt-3 dark:border-gray-800">
+                <NavLink
+                  to="/compare"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2.5 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                >
+                  <Scale className="h-4 w-4" />
+                  Compare {compareCount > 0 && `(${compareCount})`}
+                </NavLink>
                 {user ? (
                   <>
+                    <NavLink
+                      to="/favorites"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-2.5 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                    >
+                      <Heart className="h-4 w-4" />
+                      My Wishlist {favoriteCount > 0 && `(${favoriteCount})`}
+                    </NavLink>
+                    <NavLink
+                      to="/my-properties"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-2.5 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                    >
+                      <LayoutList className="h-4 w-4" />
+                      My Listings
+                    </NavLink>
                     <NavLink
                       to="/profile"
                       onClick={() => setMobileOpen(false)}
