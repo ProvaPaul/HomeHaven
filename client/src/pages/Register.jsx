@@ -10,8 +10,10 @@ import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import { registerSchema } from '../lib/validations';
 import { registerUser } from '../features/auth/authThunks';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Register() {
+  usePageTitle('Create Account');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

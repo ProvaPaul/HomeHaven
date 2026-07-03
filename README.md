@@ -1,157 +1,116 @@
 # 🏠 HomeHaven 2.0
 
-A modern, production-ready real estate platform built with the MERN stack.
+**A production-ready, AI-powered real estate platform** built with the MERN stack.
+Browse verified listings, chat with an AI assistant, get smart recommendations, manage
+properties from rich dashboards — with dark mode, charts, and full deployment configs included.
 
-## Tech Stack
+[Features](#-features) · [Tech Stack](#-tech-stack) · [Quick Start](#-quick-start) ·
+[API Docs](docs/API.md) · [Architecture](docs/ARCHITECTURE.md) · [Deployment](docs/DEPLOYMENT.md)
 
-**Frontend** — React 18, Vite, Tailwind CSS, React Router, Redux Toolkit, Axios, React Hook Form + Zod, Framer Motion, Lucide React, React Hot Toast
+---
 
-**Backend** — Node.js, Express, MongoDB, Mongoose, JWT (httpOnly cookies), bcrypt
+## ✨ Features
 
-**Storage** — Firebase Storage (for property/avatar images)
+### Marketplace
+- 🔍 **Advanced search** — filters (type, status, city, price, beds, baths), sorting, pagination, all URL-driven and shareable
+- 🏷️ **Property listings** — image galleries with lightbox, verified badges, view counts, similar properties
+- ❤️ **Wishlist**, ⚖️ **side-by-side compare** (up to 3), 🕘 **recently viewed**, 🔖 **saved searches**
+- ✉️ **Contact seller** with an inquiry inbox and in-app notifications
+- 📱 Fully responsive with animated mobile navigation
 
-## Project Structure
+### AI-powered (works with or without an API key)
+- 💬 **"Haven" chat assistant** — finds listings from natural conversation, aware of the page you're viewing
+- 🗣️ **Smart search** — *"apartments for rent under 4k in Seattle"*, understands k/m/**lakh/crore**
+- ✍️ **AI description generator** and 📝 **listing summaries**
+- 🎯 **Personalized recommendations** from favorites + browsing history
+- 💰 **Price estimator** built on real comparables from the database
+- 📷 **Image quality checker** — client-side blur/exposure/resolution detection
+- 📍 **What's nearby** — real schools, hospitals, restaurants, bus stops via OpenStreetMap
+- 📈 **Seller insights** — most-viewed listing, best posting time, AI improvement tips
 
-```
-Homehaven/
-├── client/                  # React frontend (Vite)
-│   ├── public/
-│   └── src/
-│       ├── app/             # Redux store
-│       ├── components/
-│       │   ├── common/      # ErrorBoundary, ProtectedRoute, ThemeToggle…
-│       │   ├── layout/      # Navbar, Footer, RootLayout, AuthLayout
-│       │   └── ui/          # Button, Input (design system primitives)
-│       ├── features/
-│       │   └── auth/        # authSlice + authThunks
-│       ├── lib/             # axios, firebase, zod schemas, utils
-│       ├── pages/           # Home, About, Contact, Login, Register, Profile, 404
-│       ├── providers/       # ThemeProvider (dark/light), ToastProvider
-│       └── routes/          # React Router config
-└── server/                  # Express API
-    └── src/
-        ├── config/          # env + MongoDB connection
-        ├── controllers/     # authController
-        ├── middleware/      # auth (JWT), errorHandler, notFound
-        ├── models/          # User
-        ├── routes/          # /api/auth
-        └── utils/           # ApiError, asyncHandler, token helpers
-```
+> Add a free `GEMINI_API_KEY` for full LLM quality — every feature has a smart heuristic fallback and works without one.
 
-## Getting Started
+### Dashboards
+- 👤 **User dashboard** — stats, Recharts analytics (inquiries over time, portfolio mix, top listings), listings manager, notifications, profile + password + theme settings
+- 👑 **Admin dashboard** — platform analytics, user management (roles, search), listing **verification workflow** (approve/reject/feature), CSV report exports
 
-### Prerequisites
+### Engineering
+- 🔐 JWT auth in httpOnly cookies, bcrypt hashing, role-based access, rate limiting, helmet + compression
+- ⚡ Route-level code splitting (charts only ship to dashboard visitors), vendor chunking, lazy images
+- 🌗 Dark/light theme with OS detection and zero flash-of-wrong-theme
+- ♿ Skip links, ARIA labels, keyboard-navigable gallery, reduced-motion support
+- 💥 Error boundaries, router error pages, skeleton loaders, empty states everywhere
 
-- Node.js ≥ 18
-- MongoDB running locally (or a MongoDB Atlas URI)
+## 🛠 Tech Stack
 
-### Setup
+| Layer | Technologies |
+| --- | --- |
+| Frontend | React 18, Vite, Tailwind CSS, Redux Toolkit, React Router, React Hook Form + Zod, Framer Motion, Recharts, Lucide, React Hot Toast |
+| Backend | Node.js, Express, MongoDB + Mongoose, JWT, Helmet, Compression |
+| AI | Gemini / OpenAI (pluggable), OpenStreetMap (Nominatim + Overpass), heuristic fallbacks |
+| Storage | Firebase Storage (image uploads) |
+| Deploy | Vercel (client) · Render (API) · MongoDB Atlas |
+
+## 🚀 Quick Start
+
+**Prerequisites:** Node 18+, MongoDB running locally (or an Atlas URI)
 
 ```bash
-# Install all dependencies
+# 1. Install
 npm install
 npm install --prefix client
 npm install --prefix server
 
-# Configure the server
-cp server/.env.example server/.env   # then edit values
+# 2. Configure
+cp server/.env.example server/.env    # defaults work for local dev
 
-# Run frontend + backend together
+# 3. Demo data (12 listings + demo & admin accounts)
+npm run seed --prefix server
+
+# 4. Run both apps
 npm run dev
 ```
 
-- Client: http://localhost:5173
-- API: http://localhost:5000 (proxied at `/api` from the client)
+Open **http://localhost:5173** — API runs on :5000 (proxied at `/api`).
 
-### Environment Variables
+**Demo accounts**
 
-**server/.env**
+| Role | Email | Password |
+| --- | --- | --- |
+| Agent (12 listings) | `demo@homehaven.com` | `Demo1234` |
+| Admin | `admin@homehaven.com` | `Admin1234` |
 
-| Variable | Description |
+## 📚 Documentation
+
+| Doc | Contents |
 | --- | --- |
-| `PORT` | API port (default 5000) |
-| `MONGO_URI` | MongoDB connection string |
-| `JWT_SECRET` | Secret for signing JWTs — use a long random string |
-| `JWT_EXPIRES_IN` | Token lifetime (default `7d`) |
-| `CLIENT_URL` | Allowed CORS origin (default `http://localhost:5173`) |
+| [docs/API.md](docs/API.md) | Every endpoint, params, schemas, auth requirements |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Folder structure, design decisions, conventions |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Step-by-step Vercel + Render + Atlas + Firebase, env-var reference |
 
-**client/.env** (optional — copy from `client/.env.example`)
+## 📦 Project Structure (short version)
 
-Firebase keys are only needed for image uploads; the app runs without them.
-
-## API Endpoints
-
-| Method | Endpoint | Description | Auth |
-| --- | --- | --- | --- |
-| GET | `/api/health` | Health check | — |
-| POST | `/api/auth/register` | Create account | — |
-| POST | `/api/auth/login` | Log in | — |
-| POST | `/api/auth/logout` | Log out (clears cookie) | — |
-| GET | `/api/auth/me` | Current user | ✅ |
-| PUT | `/api/auth/profile` | Update profile | ✅ |
-| GET | `/api/properties` | List with `q, type, status, city, minPrice, maxPrice, beds, baths, ids, sort, page, limit` | — |
-| GET | `/api/properties/featured` | Featured listings | — |
-| GET | `/api/properties/meta` | Filter metadata (types, statuses, cities, amenities) | — |
-| GET | `/api/properties/:id` | Property details (+1 view) | — |
-| GET | `/api/properties/:id/similar` | Similar listings | — |
-| POST | `/api/properties` | Create listing | ✅ |
-| PUT | `/api/properties/:id` | Update listing (owner/admin) | ✅ |
-| DELETE | `/api/properties/:id` | Delete listing (owner/admin) | ✅ |
-| GET | `/api/properties/user/me` | My listings | ✅ |
-| POST | `/api/properties/:id/contact` | Contact seller (creates inquiry) | — |
-| GET | `/api/properties/inquiries/me` | Inquiries for my listings | ✅ |
-| GET | `/api/favorites` | My wishlist | ✅ |
-| POST | `/api/favorites/:propertyId` | Toggle favorite | ✅ |
-| PUT | `/api/auth/password` | Change password | ✅ |
-| GET | `/api/users/dashboard` | My dashboard stats (listings, views, inquiries, charts) | ✅ |
-| GET/POST | `/api/users/saved-searches` | List / save a search | ✅ |
-| DELETE | `/api/users/saved-searches/:id` | Delete saved search | ✅ |
-| GET | `/api/notifications` | My notifications (+unread count) | ✅ |
-| PUT | `/api/notifications/:id/read`, `/read-all` | Mark read | ✅ |
-| DELETE | `/api/notifications/:id` | Delete notification | ✅ |
-| GET | `/api/admin/stats` | Platform analytics | 👑 |
-| GET | `/api/admin/users` | Manage users (search, paginate) | 👑 |
-| PUT | `/api/admin/users/:id/role` | Change role | 👑 |
-| DELETE | `/api/admin/users/:id` | Delete user + their data | 👑 |
-| GET | `/api/admin/properties` | All listings (verification filter) | 👑 |
-| PUT | `/api/admin/properties/:id/verify` | Approve / reject listing | 👑 |
-| PUT | `/api/admin/properties/:id/feature` | Toggle featured | 👑 |
-| GET | `/api/ai/status` | AI availability + provider | — |
-| POST | `/api/ai/search` | Natural-language search → filters + results | — |
-| POST | `/api/ai/chat` | AI assistant chat (listing context aware) | — |
-| POST | `/api/ai/describe` | Generate a listing description | ✅ |
-| GET | `/api/ai/summary/:propertyId` | Summarize a listing | — |
-| POST | `/api/ai/recommendations` | Personalized recommendations | optional |
-| POST | `/api/ai/estimate-price` | Market-value estimate from comparables | — |
-| GET | `/api/ai/nearby/:propertyId` | Nearby schools/hospitals/restaurants/bus stops (OpenStreetMap) | — |
-| GET | `/api/ai/seller-insights` | AI seller analytics & listing tips | ✅ |
-
-### AI setup (optional)
-
-All AI features ship with smart heuristic fallbacks and work with **no key at all**. To enable
-full LLM-powered responses, add ONE of these to `server/.env`:
-
-```bash
-GEMINI_API_KEY=...   # free tier: https://aistudio.google.com/apikey
-# or
-OPENAI_API_KEY=...
+```
+client/src/
+  components/{ai,common,dashboard,layout,property,ui}
+  features/{auth,properties,favorites,compare,notifications}   # Redux slices
+  pages/ (+ pages/dashboard, pages/dashboard/admin)            # lazy-loaded routes
+  lib/                                                         # axios, firebase, validation, chart theme…
+server/src/
+  controllers/ · models/ · routes/ · services/ · middleware/ · config/ · seed/
 ```
 
-### Demo data
+Full tree with explanations → [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
-```bash
-npm run seed --prefix server
-# 12 sample listings
-# demo@homehaven.com / Demo1234   (agent)
-# admin@homehaven.com / Admin1234 (admin — unlocks the admin dashboard)
-```
+## ☁️ Deployment
 
-## Features
+One-page summary (details in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)):
 
-- 🌗 Dark / light mode with OS-preference detection and no flash on load
-- 🔐 JWT auth via httpOnly cookies, bcrypt-hashed passwords
-- 🛡️ Protected routes + guest-only routes with auth-check loading states
-- 📱 Fully responsive with animated mobile navigation
-- ✅ Form validation with React Hook Form + Zod
-- 🔔 Themed toast notifications
-- 💥 Global error boundary and centralized API error handling
+1. **MongoDB Atlas** — free M0 cluster, allow `0.0.0.0/0`, copy the connection string
+2. **Render** — New → Blueprint → this repo (uses [render.yaml](render.yaml)); set `MONGO_URI` + `CLIENT_URL`
+3. **Vercel** — import repo, root dir `client`, set `VITE_API_URL=https://<render-app>.onrender.com/api`
+4. **Firebase Storage** *(optional)* — add `VITE_FIREBASE_*` vars to enable direct image uploads
+
+## 📄 License
+
+MIT — free to use for learning and portfolios.

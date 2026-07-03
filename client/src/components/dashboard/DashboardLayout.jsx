@@ -124,6 +124,21 @@ function SidebarContent({ onNavigate }) {
   );
 }
 
+const PAGE_TITLES = {
+  '/dashboard': 'Dashboard',
+  '/dashboard/insights': 'AI Insights',
+  '/dashboard/listings': 'My Listings',
+  '/dashboard/favorites': 'My Wishlist',
+  '/dashboard/saved-searches': 'Saved Searches',
+  '/dashboard/recently-viewed': 'Recently Viewed',
+  '/dashboard/notifications': 'Notifications',
+  '/dashboard/settings': 'Settings',
+  '/dashboard/admin': 'Admin Analytics',
+  '/dashboard/admin/users': 'Manage Users',
+  '/dashboard/admin/listings': 'Manage Listings',
+  '/dashboard/admin/reports': 'Reports',
+};
+
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch();
@@ -135,6 +150,7 @@ export default function DashboardLayout() {
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
+    document.title = `${PAGE_TITLES[pathname] || 'Dashboard'} | HomeHaven`;
   }, [pathname]);
 
   useEffect(() => {

@@ -1,0 +1,23 @@
+# Render Blueprint — deploys the HomeHaven API.
+# Dashboard → New → Blueprint → point at this repo.
+services:
+  - type: web
+    name: homehaven-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false # paste your MongoDB Atlas connection string
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CLIENT_URL
+        sync: false # your Vercel URL, e.g. https://homehaven.vercel.app
+      - key: GEMINI_API_KEY
+        sync: false # optional — enables full AI features

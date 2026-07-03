@@ -10,8 +10,10 @@ import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import { loginSchema } from '../lib/validations';
 import { loginUser } from '../features/auth/authThunks';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Login() {
+  usePageTitle('Log In');
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();

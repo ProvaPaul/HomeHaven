@@ -14,6 +14,7 @@ import { STATUS_LABELS, TYPE_LABELS } from '../lib/format';
 import { fetchProperties } from '../features/properties/propertyThunks';
 import { selectPropertyList } from '../features/properties/propertiesSlice';
 import { selectIsAuthenticated } from '../features/auth/authSlice';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const FILTER_KEYS = ['q', 'type', 'status', 'city', 'minPrice', 'maxPrice', 'beds', 'baths', 'sort', 'page'];
 
@@ -26,6 +27,7 @@ const sortOptions = [
 ];
 
 export default function Properties() {
+  usePageTitle('Browse Properties', 'Search thousands of verified homes, apartments, and villas for sale or rent.');
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const { items, total, page, pages, status } = useSelector(selectPropertyList);

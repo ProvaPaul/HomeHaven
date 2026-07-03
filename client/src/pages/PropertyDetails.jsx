@@ -32,6 +32,7 @@ import { recordView } from '../lib/recentlyViewed';
 import { formatPrice, formatArea, TYPE_LABELS } from '../lib/format';
 import { fetchProperty } from '../features/properties/propertyThunks';
 import { selectCurrentProperty, clearCurrentProperty } from '../features/properties/propertiesSlice';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 function DetailsSkeleton() {
   return (
@@ -58,6 +59,7 @@ export default function PropertyDetails() {
   const dispatch = useDispatch();
   const { property, status, error } = useSelector(selectCurrentProperty);
   const [similar, setSimilar] = useState([]);
+  usePageTitle(property?.title);
 
   useEffect(() => {
     dispatch(fetchProperty(id));

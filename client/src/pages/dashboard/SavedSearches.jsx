@@ -6,8 +6,7 @@ import { ArrowRight, Bookmark, Trash2 } from 'lucide-react';
 import PageHeader from '../../components/dashboard/PageHeader';
 import EmptyState from '../../components/dashboard/EmptyState';
 import api from '../../lib/axios';
-import { STATUS_LABELS, TYPE_LABELS } from '../../lib/format';
-import { timeAgo } from '../../lib/format';
+import { STATUS_LABELS, TYPE_LABELS, timeAgo } from '../../lib/format';
 
 // Turn a stored query string into readable filter chips
 const describeQuery = (query) => {

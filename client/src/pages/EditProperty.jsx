@@ -9,8 +9,10 @@ import NotFound from './NotFound';
 import { fetchProperty, updateProperty } from '../features/properties/propertyThunks';
 import { selectCurrentProperty, clearCurrentProperty } from '../features/properties/propertiesSlice';
 import { selectUser } from '../features/auth/authSlice';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function EditProperty() {
+  usePageTitle('Edit Listing');
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();

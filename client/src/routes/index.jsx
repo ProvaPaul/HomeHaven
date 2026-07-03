@@ -1,83 +1,95 @@
+import { Suspense, lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import RootLayout from '../components/layout/RootLayout';
 import AuthLayout from '../components/layout/AuthLayout';
-import DashboardLayout from '../components/dashboard/DashboardLayout';
 import ProtectedRoute from '../components/common/ProtectedRoute';
 import GuestRoute from '../components/common/GuestRoute';
 import AdminRoute from '../components/common/AdminRoute';
+import PageLoader from '../components/common/PageLoader';
+import RouteError from '../components/common/RouteError';
 
-import Home from '../pages/Home';
-import About from '../pages/About';
-import Contact from '../pages/Contact';
-import Login from '../pages/Login';
-import Register from '../pages/Register';
-import Properties from '../pages/Properties';
-import PropertyDetails from '../pages/PropertyDetails';
-import AddProperty from '../pages/AddProperty';
-import EditProperty from '../pages/EditProperty';
-import MyProperties from '../pages/MyProperties';
-import Favorites from '../pages/Favorites';
-import Compare from '../pages/Compare';
-import NotFound from '../pages/NotFound';
+// Route-level code splitting: each page loads on demand, so the initial
+// bundle stays small and the charts library only ships to dashboard visitors.
+const DashboardLayout = lazy(() => import('../components/dashboard/DashboardLayout'));
+const Home = lazy(() => import('../pages/Home'));
+const About = lazy(() => import('../pages/About'));
+const Contact = lazy(() => import('../pages/Contact'));
+const Login = lazy(() => import('../pages/Login'));
+const Register = lazy(() => import('../pages/Register'));
+const Properties = lazy(() => import('../pages/Properties'));
+const PropertyDetails = lazy(() => import('../pages/PropertyDetails'));
+const AddProperty = lazy(() => import('../pages/AddProperty'));
+const EditProperty = lazy(() => import('../pages/EditProperty'));
+const MyProperties = lazy(() => import('../pages/MyProperties'));
+const Favorites = lazy(() => import('../pages/Favorites'));
+const Compare = lazy(() => import('../pages/Compare'));
+const NotFound = lazy(() => import('../pages/NotFound'));
+const Overview = lazy(() => import('../pages/dashboard/Overview'));
+const Insights = lazy(() => import('../pages/dashboard/Insights'));
+const SavedSearches = lazy(() => import('../pages/dashboard/SavedSearches'));
+const RecentlyViewedPage = lazy(() => import('../pages/dashboard/RecentlyViewedPage'));
+const Notifications = lazy(() => import('../pages/dashboard/Notifications'));
+const Settings = lazy(() => import('../pages/dashboard/Settings'));
+const AdminOverview = lazy(() => import('../pages/dashboard/admin/AdminOverview'));
+const ManageUsers = lazy(() => import('../pages/dashboard/admin/ManageUsers'));
+const ManageListings = lazy(() => import('../pages/dashboard/admin/ManageListings'));
+const Reports = lazy(() => import('../pages/dashboard/admin/Reports'));
 
-import Overview from '../pages/dashboard/Overview';
-import Insights from '../pages/dashboard/Insights';
-import SavedSearches from '../pages/dashboard/SavedSearches';
-import RecentlyViewedPage from '../pages/dashboard/RecentlyViewedPage';
-import Notifications from '../pages/dashboard/Notifications';
-import Settings from '../pages/dashboard/Settings';
-import AdminOverview from '../pages/dashboard/admin/AdminOverview';
-import ManageUsers from '../pages/dashboard/admin/ManageUsers';
-import ManageListings from '../pages/dashboard/admin/ManageListings';
-import Reports from '../pages/dashboard/admin/Reports';
+const page = (Component) => (
+  <Suspense fallback={<PageLoader />}>
+    <Component />
+  </Suspense>
+);
 
 export const router = createBrowserRouter([
   {
     element: <RootLayout />,
+    errorElement: <RouteError />,
     children: [
-      { path: '/', element: <Home /> },
-      { path: '/about', element: <About /> },
-      { path: '/contact', element: <Contact /> },
-      { path: '/properties', element: <Properties /> },
-      { path: '/compare', element: <Compare /> },
+      { path: '/', element: page(Home) },
+      { path: '/about', element: page(About) },
+      { path: '/contact', element: page(Contact) },
+      { path: '/properties', element: page(Properties) },
+      { path: '/compare', element: page(Compare) },
       {
         element: <ProtectedRoute />,
         children: [
-          { path: '/properties/new', element: <AddProperty /> },
-          { path: '/properties/:id/edit', element: <EditProperty /> },
+          { path: '/properties/new', element: page(AddProperty) },
+          { path: '/properties/:id/edit', element: page(EditProperty) },
         ],
       },
-      { path: '/properties/:id', element: <PropertyDetails /> },
+      { path: '/properties/:id', element: page(PropertyDetails) },
       // Legacy paths → dashboard equivalents
       { path: '/profile', element: <Navigate to="/dashboard/settings" replace /> },
       { path: '/my-properties', element: <Navigate to="/dashboard/listings" replace /> },
       { path: '/favorites', element: <Navigate to="/dashboard/favorites" replace /> },
-      { path: '*', element: <NotFound /> },
+      { path: '*', element: page(NotFound) },
     ],
   },
   {
     element: <ProtectedRoute />,
+    errorElement: <RouteError />,
     children: [
       {
         path: '/dashboard',
-        element: <DashboardLayout />,
+        element: page(DashboardLayout),
         children: [
-          { index: true, element: <Overview /> },
-          { path: 'insights', element: <Insights /> },
-          { path: 'listings', element: <MyProperties /> },
-          { path: 'favorites', element: <Favorites /> },
-          { path: 'saved-searches', element: <SavedSearches /> },
-          { path: 'recently-viewed', element: <RecentlyViewedPage /> },
-          { path: 'notifications', element: <Notifications /> },
-          { path: 'settings', element: <Settings /> },
+          { index: true, element: page(Overview) },
+          { path: 'insights', element: page(Insights) },
+          { path: 'listings', element: page(MyProperties) },
+          { path: 'favorites', element: page(Favorites) },
+          { path: 'saved-searches', element: page(SavedSearches) },
+          { path: 'recently-viewed', element: page(RecentlyViewedPage) },
+          { path: 'notifications', element: page(Notifications) },
+          { path: 'settings', element: page(Settings) },
           {
             element: <AdminRoute />,
             children: [
-              { path: 'admin', element: <AdminOverview /> },
-              { path: 'admin/users', element: <ManageUsers /> },
-              { path: 'admin/listings', element: <ManageListings /> },
-              { path: 'admin/reports', element: <Reports /> },
+              { path: 'admin', element: page(AdminOverview) },
+              { path: 'admin/users', element: page(ManageUsers) },
+              { path: 'admin/listings', element: page(ManageListings) },
+              { path: 'admin/reports', element: page(Reports) },
             ],
           },
         ],
@@ -86,12 +98,13 @@ export const router = createBrowserRouter([
   },
   {
     element: <GuestRoute />,
+    errorElement: <RouteError />,
     children: [
       {
         element: <AuthLayout />,
         children: [
-          { path: '/login', element: <Login /> },
-          { path: '/register', element: <Register /> },
+          { path: '/login', element: page(Login) },
+          { path: '/register', element: page(Register) },
         ],
       },
     ],

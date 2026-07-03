@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Award, Heart, Lightbulb, Target } from 'lucide-react';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const values = [
   {
@@ -36,6 +37,7 @@ const team = [
 ];
 
 export default function About() {
+  usePageTitle('About Us');
   return (
     <>
       {/* Hero */}

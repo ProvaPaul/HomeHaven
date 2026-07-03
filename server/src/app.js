@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import compression from 'compression';
 
 import { env } from './config/env.js';
 import authRoutes from './routes/authRoutes.js';
@@ -15,9 +17,15 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 
+// Behind Render/Heroku-style proxies: needed for secure cookies and correct req.ip
+app.set('trust proxy', 1);
+
+app.use(helmet());
+app.use(compression());
 app.use(
   cors({
-    origin: env.CLIENT_URL,
+    // Allow one or more origins (comma-separated CLIENT_URL)
+    origin: env.CLIENT_URL.split(',').map((s) => s.trim()),
     credentials: true,
   })
 );

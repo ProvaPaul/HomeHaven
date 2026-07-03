@@ -12,6 +12,7 @@ import {
   removeFromCompare,
   clearCompare,
 } from '../features/compare/compareSlice';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const rows = [
   { label: 'Price', render: (p) => formatPrice(p.price, p.status) },
@@ -31,6 +32,7 @@ const rows = [
 ];
 
 export default function Compare() {
+  usePageTitle('Compare Properties');
   const dispatch = useDispatch();
   const ids = useSelector(selectCompareIds);
   const [properties, setProperties] = useState([]);

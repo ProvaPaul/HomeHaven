@@ -4,8 +4,10 @@ import toast from 'react-hot-toast';
 
 import PropertyForm from '../components/property/PropertyForm';
 import { createProperty } from '../features/properties/propertyThunks';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function AddProperty() {
+  usePageTitle('List a Property');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

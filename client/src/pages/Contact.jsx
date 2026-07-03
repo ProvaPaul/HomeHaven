@@ -8,6 +8,7 @@ import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import { contactSchema } from '../lib/validations';
 import { cn } from '../lib/utils';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const contactInfo = [
   { icon: MapPin, title: 'Office', lines: ['123 Haven Street, Suite 400', 'San Francisco, CA 94103'] },
@@ -17,6 +18,7 @@ const contactInfo = [
 ];
 
 export default function Contact() {
+  usePageTitle('Contact Us');
   const {
     register,
     handleSubmit,
