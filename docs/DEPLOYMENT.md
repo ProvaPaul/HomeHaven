@@ -13,6 +13,7 @@ Browser ──HTTPS──▶ Vercel (React SPA)
 Browser ──uploads──▶ Firebase Storage (image URLs stored in Mongo)
 ```
 
+
 ---
 
 ## 1. MongoDB Atlas (database)
