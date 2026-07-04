@@ -144,6 +144,22 @@ are cached in MongoDB for 24h.
 | POST | `/estimate` | Body: `{ destination: { lat, lon }, propertyIds: [] }` → `{ commutes: { [propertyId]: { available, drivingMin, walkingMin, cyclingMin, distanceKm, source } } }` — used for list-page badges/filter/sort |
 | POST | `/property/:id` | Body: `{ destinations: [{ label, lat, lon }] }` → `{ results: [{ label, available, drivingMin, walkingMin, cyclingMin, distanceKm }] }` — used on the Property Details page |
 
+## Documents — `/api/documents` (🔒, rate-limited: 10 req/min/IP)
+
+AI Lease & Property Document Analyzer. Falls back to a keyword-based heuristic scan when no
+AI key is configured (response includes `aiGenerated: false` in that case).
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| POST | `/analyze` | Multipart form: `file` (PDF/DOCX, ≤8MB), `documentType` (`rental-agreement` \| `lease-contract` \| `sale-agreement` \| `other`) → `{ analysis }` (full record, saved to the DB) |
+| GET | `/` | My past analyses — summary fields only: `{ documents: [{ fileName, fileType, documentType, safetyScore, summary, aiGenerated, createdAt }] }` |
+| GET | `/:id` | Full saved analysis (owner or admin only) |
+| DELETE | `/:id` | Delete a saved analysis (owner or admin only) |
+
+**Analysis shape** (`extraction` fields, `riskAnalysis` items, `safetyScore` 0-100, `summary`,
+`importantClauses`, `negotiationPoints`, `questionsForLandlord` — see `DocumentAnalysis` model
+for the full schema).
+
 ## Misc
 
 | Method | Endpoint | Description |

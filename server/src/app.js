@@ -13,6 +13,7 @@ import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import commuteRoutes from './routes/commuteRoutes.js';
+import documentRoutes from './routes/documentRoutes.js';
 import { notFound } from './middleware/notFound.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
@@ -46,6 +47,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/commute', commuteRoutes);
+app.use('/api/documents', documentRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

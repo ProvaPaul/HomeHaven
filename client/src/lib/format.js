@@ -27,6 +27,13 @@ export const TYPE_LABELS = {
   commercial: 'Commercial',
 };
 
+export const DOCUMENT_TYPE_LABELS = {
+  'rental-agreement': 'Rental Agreement',
+  'lease-contract': 'Lease Contract',
+  'sale-agreement': 'Property Sale Agreement',
+  other: 'Other Document',
+};
+
 export const timeAgo = (date) => {
   const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
   const units = [

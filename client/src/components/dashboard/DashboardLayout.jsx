@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import {
   Bookmark,
+  FileSearch,
   Heart,
   History,
   Home,
@@ -35,6 +36,7 @@ const userLinks = [
   { to: '/dashboard/favorites', label: 'Favorites', icon: Heart },
   { to: '/dashboard/saved-searches', label: 'Saved Searches', icon: Bookmark },
   { to: '/dashboard/recently-viewed', label: 'Recently Viewed', icon: History },
+  { to: '/dashboard/documents', label: 'Document Analyzer', icon: FileSearch },
   { to: '/dashboard/notifications', label: 'Notifications', icon: Bell },
   { to: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];
@@ -131,6 +133,7 @@ const PAGE_TITLES = {
   '/dashboard/favorites': 'My Wishlist',
   '/dashboard/saved-searches': 'Saved Searches',
   '/dashboard/recently-viewed': 'Recently Viewed',
+  '/dashboard/documents': 'Document Analyzer',
   '/dashboard/notifications': 'Notifications',
   '/dashboard/settings': 'Settings',
   '/dashboard/admin': 'Admin Analytics',

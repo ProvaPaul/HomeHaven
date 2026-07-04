@@ -28,6 +28,7 @@ properties from rich dashboards — with dark mode, charts, and full deployment 
 - 📍 **What's nearby** — real schools, hospitals, restaurants, bus stops via OpenStreetMap
 - 🚗 **Commute-Time Search** — save a workplace/university/any address, see live 🚗 driving, 🚶 walking, 🚴 cycling times on every listing, filter by max commute, sort by shortest — powered by OSRM (free) + OpenRouteService, cached in MongoDB for 24h
 - 📈 **Seller insights** — most-viewed listing, best posting time, AI improvement tips
+- 📄 **AI Lease & Document Analyzer** — upload a rental agreement, lease contract, or sale agreement (PDF/DOCX) and get rent/deposit/notice-period/etc extraction, a 🟢🟡🔴 clause-by-clause risk analysis, an overall Safety Score, plain-English summary, negotiation points, and questions to ask — downloadable as a PDF report, with full history saved to your account
 
 > Add a free `GEMINI_API_KEY` for full LLM quality — every feature has a smart heuristic fallback and works without one.
 > Commute-Time Search works out of the box (OSRM handles driving for free); add a free `ORS_API_KEY` from [openrouteservice.org](https://openrouteservice.org/dev/#/signup) for real walking/cycling routing instead of the distance-based estimate.

@@ -30,6 +30,8 @@ const Insights = lazy(() => import('../pages/dashboard/Insights'));
 const SavedSearches = lazy(() => import('../pages/dashboard/SavedSearches'));
 const RecentlyViewedPage = lazy(() => import('../pages/dashboard/RecentlyViewedPage'));
 const Notifications = lazy(() => import('../pages/dashboard/Notifications'));
+const Documents = lazy(() => import('../pages/dashboard/Documents'));
+const DocumentDetails = lazy(() => import('../pages/dashboard/DocumentDetails'));
 const Settings = lazy(() => import('../pages/dashboard/Settings'));
 const AdminOverview = lazy(() => import('../pages/dashboard/admin/AdminOverview'));
 const ManageUsers = lazy(() => import('../pages/dashboard/admin/ManageUsers'));
@@ -82,6 +84,8 @@ export const router = createBrowserRouter([
           { path: 'saved-searches', element: page(SavedSearches) },
           { path: 'recently-viewed', element: page(RecentlyViewedPage) },
           { path: 'notifications', element: page(Notifications) },
+          { path: 'documents', element: page(Documents) },
+          { path: 'documents/:id', element: page(DocumentDetails) },
           { path: 'settings', element: page(Settings) },
           {
             element: <AdminRoute />,
