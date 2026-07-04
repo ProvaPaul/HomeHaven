@@ -5,12 +5,13 @@ import { BadgeCheck, Bath, BedDouble, MapPin, Ruler, Star } from 'lucide-react';
 import StatusBadge from './StatusBadge';
 import FavoriteButton from './FavoriteButton';
 import CompareButton from './CompareButton';
+import CommuteBadge from './CommuteBadge';
 import { formatPrice, formatArea, TYPE_LABELS } from '../../lib/format';
 
 const FALLBACK_IMAGE =
   'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="%23e5e7eb"/><path d="M200 100l-60 48h18v52h30v-32h24v32h30v-52h18l-60-48z" fill="%239ca3af"/></svg>';
 
-function PropertyCard({ property }) {
+function PropertyCard({ property, commute, isCommuteLoading }) {
   const {
     _id,
     title,
@@ -55,6 +56,11 @@ function PropertyCard({ property }) {
           <FavoriteButton propertyId={_id} />
           <CompareButton propertyId={_id} />
         </div>
+        {(commute || isCommuteLoading) && (
+          <div className="absolute bottom-3 left-3">
+            <CommuteBadge commute={commute} isLoading={isCommuteLoading} />
+          </div>
+        )}
       </div>
 
       {/* Body */}

@@ -15,6 +15,10 @@ export const env = {
   GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-2.0-flash',
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
   OPENAI_MODEL: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+  // Optional — enables real walking/cycling routing for Commute-Time Search.
+  // Without it, driving uses the free OSRM demo server and walking/cycling
+  // fall back to a distance-based heuristic. Free tier: openrouteservice.org
+  ORS_API_KEY: process.env.ORS_API_KEY || '',
 };
 
 if (env.NODE_ENV === 'production' && env.JWT_SECRET === 'dev-only-secret-change-me') {

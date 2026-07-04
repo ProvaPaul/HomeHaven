@@ -10,6 +10,8 @@ export default function PropertyGrid({
   emptyTitle = 'No properties found',
   emptyMessage = 'Try adjusting your search or filters.',
   columns = 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+  commutes = null,
+  isCommuteLoading = false,
 }) {
   if (isLoading) {
     return (
@@ -36,7 +38,12 @@ export default function PropertyGrid({
   return (
     <div className={cn('grid gap-6', columns)}>
       {properties.map((property) => (
-        <PropertyCard key={property._id} property={property} />
+        <PropertyCard
+          key={property._id}
+          property={property}
+          commute={commutes?.[property._id]}
+          isCommuteLoading={isCommuteLoading && !commutes?.[property._id]}
+        />
       ))}
     </div>
   );

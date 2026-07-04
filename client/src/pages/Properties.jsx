@@ -6,6 +6,8 @@ import { Bookmark, Search, SlidersHorizontal, X } from 'lucide-react';
 
 import PropertyGrid from '../components/property/PropertyGrid';
 import FiltersPanel from '../components/property/FiltersPanel';
+import CommuteSearchBar from '../components/property/CommuteSearchBar';
+import CommuteFilter from '../components/property/CommuteFilter';
 import SmartSearchBar from '../components/ai/SmartSearchBar';
 import Pagination from '../components/common/Pagination';
 import Select from '../components/ui/Select';
@@ -15,6 +17,8 @@ import { fetchProperties } from '../features/properties/propertyThunks';
 import { selectPropertyList } from '../features/properties/propertiesSlice';
 import { selectIsAuthenticated } from '../features/auth/authSlice';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useCommuteDestinations } from '../hooks/useCommuteDestinations';
+import { useCommuteEstimates } from '../hooks/useCommuteEstimates';
 
 const FILTER_KEYS = ['q', 'type', 'status', 'city', 'minPrice', 'maxPrice', 'beds', 'baths', 'sort', 'page'];
 
@@ -33,6 +37,14 @@ export default function Properties() {
   const { items, total, page, pages, status } = useSelector(selectPropertyList);
   const [mobileFilters, setMobileFilters] = useState(false);
   const [searchDraft, setSearchDraft] = useState(searchParams.get('q') || '');
+
+  // Commute-Time Search: destination is picked from the saved list, applied
+  // to whichever properties are currently loaded on this page.
+  const { destinations } = useCommuteDestinations();
+  const [activeDestinationId, setActiveDestinationId] = useState('');
+  const [maxCommuteMinutes, setMaxCommuteMinutes] = useState('');
+  const [sortByCommute, setSortByCommute] = useState(false);
+  const activeDestination = destinations.find((d) => d.id === activeDestinationId) || null;
 
   const params = useMemo(() => {
     const obj = {};
@@ -70,6 +82,26 @@ export default function Properties() {
   const activeFilterCount = ['type', 'status', 'city', 'minPrice', 'maxPrice', 'beds', 'baths'].filter(
     (k) => params[k]
   ).length;
+
+  // Commute badges/filter/sort apply to the currently loaded page of results —
+  // routing every matching listing across all pages against a free routing
+  // API isn't practical, so this scopes to what's already on screen.
+  const propertyIds = useMemo(() => items.map((p) => p._id), [items]);
+  const { commutes, isLoading: commuteLoading } = useCommuteEstimates(activeDestination, propertyIds);
+
+  const displayedItems = useMemo(() => {
+    if (!activeDestination) return items;
+    const maxMin = Number(maxCommuteMinutes);
+    let list = items.filter((p) => {
+      const c = commutes[p._id];
+      if (!c?.available) return false;
+      return !(maxMin > 0) || c.drivingMin <= maxMin;
+    });
+    if (sortByCommute) {
+      list = [...list].sort((a, b) => commutes[a._id].drivingMin - commutes[b._id].drivingMin);
+    }
+    return list;
+  }, [items, activeDestination, commutes, maxCommuteMinutes, sortByCommute]);
 
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const navigate = useNavigate();
@@ -120,6 +152,19 @@ export default function Properties() {
             <Bookmark className="h-4 w-4" />
             Save this search
           </button>
+        )}
+      </div>
+
+      {/* Commute-Time Search */}
+      <div className="mt-6">
+        <CommuteSearchBar activeId={activeDestinationId} onActiveChange={setActiveDestinationId} />
+        {activeDestination && (
+          <CommuteFilter
+            maxMinutes={maxCommuteMinutes}
+            onMaxMinutesChange={setMaxCommuteMinutes}
+            sortByCommute={sortByCommute}
+            onSortByCommuteChange={setSortByCommute}
+          />
         )}
       </div>
 
@@ -194,11 +239,17 @@ export default function Properties() {
         {/* Results */}
         <div className="lg:col-span-3">
           <PropertyGrid
-            properties={items}
+            properties={displayedItems}
             isLoading={status === 'loading' || status === 'idle'}
             skeletonCount={9}
-            emptyTitle="No properties match your search"
-            emptyMessage="Try different keywords or remove some filters."
+            emptyTitle={activeDestination ? 'No properties within that commute time' : 'No properties match your search'}
+            emptyMessage={
+              activeDestination
+                ? 'Try raising the max commute time or removing it.'
+                : 'Try different keywords or remove some filters.'
+            }
+            commutes={activeDestination ? commutes : null}
+            isCommuteLoading={commuteLoading}
           />
           {status === 'failed' && (
             <p className="mt-6 text-center text-sm text-red-600 dark:text-red-400">

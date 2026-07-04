@@ -26,6 +26,7 @@ import PropertyGrid from '../components/property/PropertyGrid';
 import RecentlyViewed from '../components/property/RecentlyViewed';
 import AiSummary from '../components/ai/AiSummary';
 import NearbyPlaces from '../components/ai/NearbyPlaces';
+import PropertyCommute from '../components/property/PropertyCommute';
 import NotFound from './NotFound';
 import api from '../lib/axios';
 import { recordView } from '../lib/recentlyViewed';
@@ -204,6 +205,9 @@ export default function PropertyDetails() {
 
           {/* Nearby schools, hospitals, restaurants, transport */}
           <NearbyPlaces propertyId={property._id} />
+
+          {/* Commute time to saved destinations (Office, University, ...) */}
+          <PropertyCommute propertyId={property._id} />
         </div>
 
         {/* Right column */}

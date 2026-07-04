@@ -132,6 +132,18 @@ Every endpoint works without an LLM key via heuristic fallbacks; responses inclu
 | GET | `/nearby/:propertyId` | — | Schools/healthcare/restaurants/bus stops with distances (OpenStreetMap, cached 24h) |
 | GET | `/seller-insights` | 🔒 | `{ stats, mostViewed, trending, bestPostingTime, tips, narrative }` |
 
+## Commute — `/api/commute` (rate-limited: 40 req/min/IP)
+
+Driving is always computed via the free OSRM demo server. Walking/cycling use OpenRouteService
+if `ORS_API_KEY` is set, otherwise a distance-based heuristic. All geocoding and route results
+are cached in MongoDB for 24h.
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| POST | `/geocode` | Body: `{ query }` → `{ available, location: { lat, lon, label } }` |
+| POST | `/estimate` | Body: `{ destination: { lat, lon }, propertyIds: [] }` → `{ commutes: { [propertyId]: { available, drivingMin, walkingMin, cyclingMin, distanceKm, source } } }` — used for list-page badges/filter/sort |
+| POST | `/property/:id` | Body: `{ destinations: [{ label, lat, lon }] }` → `{ results: [{ label, available, drivingMin, walkingMin, cyclingMin, distanceKm }] }` — used on the Property Details page |
+
 ## Misc
 
 | Method | Endpoint | Description |

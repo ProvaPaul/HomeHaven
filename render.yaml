@@ -21,3 +21,5 @@ services:
         sync: false # your Vercel URL, e.g. https://homehaven.vercel.app
       - key: GEMINI_API_KEY
         sync: false # optional — enables full AI features
+      - key: ORS_API_KEY
+        sync: false # optional — enables real walking/cycling commute routing

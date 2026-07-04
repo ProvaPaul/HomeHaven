@@ -26,9 +26,11 @@ properties from rich dashboards — with dark mode, charts, and full deployment 
 - 💰 **Price estimator** built on real comparables from the database
 - 📷 **Image quality checker** — client-side blur/exposure/resolution detection
 - 📍 **What's nearby** — real schools, hospitals, restaurants, bus stops via OpenStreetMap
+- 🚗 **Commute-Time Search** — save a workplace/university/any address, see live 🚗 driving, 🚶 walking, 🚴 cycling times on every listing, filter by max commute, sort by shortest — powered by OSRM (free) + OpenRouteService, cached in MongoDB for 24h
 - 📈 **Seller insights** — most-viewed listing, best posting time, AI improvement tips
 
 > Add a free `GEMINI_API_KEY` for full LLM quality — every feature has a smart heuristic fallback and works without one.
+> Commute-Time Search works out of the box (OSRM handles driving for free); add a free `ORS_API_KEY` from [openrouteservice.org](https://openrouteservice.org/dev/#/signup) for real walking/cycling routing instead of the distance-based estimate.
 
 ### Dashboards
 - 👤 **User dashboard** — stats, Recharts analytics (inquiries over time, portfolio mix, top listings), listings manager, notifications, profile + password + theme settings
